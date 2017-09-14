@@ -1,0 +1,271 @@
+:root {
+    --base-color: rgba(150, 150, 255, 0.8);
+    --base-color-active: rgba(200, 200, 255, 0.8);
+    --active-taskbar-button: rgba(230, 230, 255, 0.8);
+}
+body {
+    background-image: url('../images/silverwingsOfficial2008.png');
+    background-repeat:no-repeat;
+    background-size:100%;
+    overflow: hidden;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.taskbarBottom {
+    height: 40px;
+    width: 100%;
+    background-color: var(--base-color);
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+}
+
+.taskbar-window-button {
+    height: 45px;
+    width: 45px;
+    background-color: var(--base-color);
+}
+
+.taskbarBottom .taskbarThumbnailButton {
+    height: 100%;
+    width: 45px;
+    background-color: var(--base-color);
+}
+
+.taskbarBottom .taskbarThumbnailButton:hover {
+    background-color: var(--active-taskbar-button);
+}
+
+.table-cell {
+    display: table-cell;
+}
+
+.table-row {
+    display: table-row;
+}
+
+.table {
+    display: table;
+}
+
+.window {
+    box-shadow: 0px 0px 15px black;
+    position: absolute;
+    left: 20px;
+    top: 20px;
+}
+
+.window span {
+    background-color: var(--base-color);
+}
+
+.activeWindow span {
+    background-color: var(--base-color-active);
+}
+
+.window span span {
+    background-color: transparent;
+}
+
+.window-title {
+    font-family: Arial;
+    font-size: 12px;
+    font-weight: bold;
+    color: black;
+    text-shadow: white 0px 0px 3px;
+}
+
+.top-left-resize {
+    cursor: nw-resize;
+    width: 5px;
+    height: 30px;
+    display: table-cell;
+}
+
+.top-right-resize {
+    cursor: ne-resize;
+    width: 5px;
+    height: 30px;
+    display: table-cell;
+}
+
+.left-resize {
+    cursor: w-resize;
+    width: 5px;
+    display: table-cell;
+    border-width: 1px;
+    border-left-color: white;
+    border-left-style: solid;
+}
+
+.right-resize {
+    cursor: e-resize;
+    width: 5px;
+    display: table-cell;
+    border-width: 1px;
+    border-right-color: white;
+    border-right-style: solid;
+}
+
+.left-bottom-resize {
+    cursor: sw-resize;
+    border-width: 1px;
+    border-left-color: white;
+    border-bottom-color: white;
+    border-left-style: solid;
+    border-bottom-style: solid;
+}
+
+.right-bottom-resize {
+    cursor: se-resize;
+    border-width: 1px;
+    border-right-color: white;
+    border-bottom-color: white;
+    border-right-style: solid;
+    border-bottom-style: solid;
+}
+
+.bottom-resize {
+    cursor: s-resize;
+    height: 5px;
+    display: table-cell;
+    border-width: 1px;
+    border-bottom-color: white;
+    border-bottom-style: solid;
+}
+
+.top-resize {
+    cursor: n-resize;
+    display: table-cell;
+    border-width: 1px;
+    border-top-color: white;
+    border-top-style: solid;
+    height: 5px;
+}
+
+.left-top-resize {
+    cursor: nw-resize;
+    border-width: 1px;
+    border-left-color: white;
+    border-top-color: white;
+    border-left-style: solid;
+    border-top-style: solid;
+    border-radius: 5px 0px 0px 0px;
+}
+
+.right-top-resize {
+    cursor: ne-resize;
+    border-width: 1px;
+    border-right-color: white;
+    border-top-color: white;
+    border-right-style: solid;
+    border-top-style: solid;
+    border-radius: 0px 5px 0px 0px;
+}
+
+.right-top-resize, .left-top-resize, .right-bottom-resize, .left-bottom-resize {
+    height: 6px;
+    width: 6px;
+    min-width: 6px;
+    min-height: 6px;
+    display: table-cell;
+}
+
+/*        .content {
+            border-color: white;
+            border-style: solid;
+            border-width: 1px;
+        }*/
+
+.dragger {
+    cursor: move;
+    height: 30px;
+    color: black;
+    font-size: 13px;
+    font-family: Arial;
+    min-width: 100px;
+    overflow-x: hidden;
+}
+
+.titleCloseCmd, .titleCmd {
+    cursor: default;
+    display: inline-block;
+    width: 30px;
+    text-align: center;
+    border-radius: 3px;
+    border-width: 1px;
+    border-color: white;
+    border-style: solid;
+    font-family: Arial;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+    text-shadow: black 0px 0px 3px;
+}
+
+.titleCmd {
+    background: linear-gradient(#aeaeff 0%, #2222dd 49%, #080810 50%, #2222dd 100%);
+}
+
+.titleCmd:hover {
+    background: linear-gradient(#aeaeff 0%, #5555dd 49%, #101022 50%, #5555dd 100%);
+}
+
+.titleCloseCmd {
+    background: linear-gradient(#ffaeae 0%, #dd2222 49%, #100808 50%, #dd2222 100%);
+}
+
+.titleCloseCmd:hover {
+    background: linear-gradient(#ffaeae 0%, #ee5555 49%, #221010 50%, #ee5555 100%);
+}
+
+.innerWindowContentPane {
+    overflow: scroll;
+    width: 100%;
+    height: 100%;
+}
+
+.tabsController .tabsRow .tab, .tabsController .tabsRow .activeTab{
+    text-align: center;
+    vertical-align: middle;
+    display: inline-block;
+    min-width: 100px;
+    height: 25px;
+    box-sizing: border-box;
+    padding: 3px;
+    font-family: Arial;
+    font-size: 12px;
+    font-weight: bold;
+    color: #444444;
+    border-style: hidden;
+    border-width: 1px;
+    border-color: black;
+    border-radius: 3px 3px 0px 0px;
+    box-shadow: 0px -1px 1px black;
+    cursor: default;
+}
+
+.tabsController .tabsRow .tab {
+    background: linear-gradient(#ffffff 0%, #afafaf 100%);
+}
+
+.tabsController .tabsRow .tab:hover {
+    background: linear-gradient(#ffffff 0%, lightblue 100%);
+}
+
+.tabsController .tabsRow .activeTab {
+    background-color: white;
+}
+
+.tabsController .tabsRow .tab, .tabsController .tabsRow .activeTab{
+    margin-right: 5px;
+}
+
+.hr {
+    background-color: white;
+    height:5px;
+    box-shadow: 0px 1px 0px black;
+}

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="../style/gentle-blue.css" />
+    <script src="../script/main.js" defer></script>
+</head>
+<body>
+<app-window caption="my content">
+    <app-window-body border="yes" bordercolor="white" bgcolor="transparent" scroll="auto">
+        <table border="1">
+            <tr>
+                <th>Full Name:</th>
+                <th>Major Field:</th>
+                <th>Final Grade:</th>
+            </tr>
+            <tr>
+                <td>
+                    Daniel Suissa
+                </td>
+                <td>
+                    Computer Science
+                </td>
+                <td>
+                    87
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Itzik Donovski
+                </td>
+                <td>
+                    Geology
+                </td>
+                <td>
+                    92
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Lior Shaked
+                </td>
+                <td>
+                    Mathematics
+                </td>
+                <td>
+                    90
+                </td>
+            </tr>
+        </table>
+    </app-window-body>
+</app-window>
+
+<app-window caption="exprerimental tabs">
+    <tabs-controller>
+        <tab-controller name="settingsTab" caption="settings">
+            <table>
+                <tr>
+                    <td>
+                        Gender:
+                    </td>
+                    <td>
+                        <input type="text" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Activate:
+                    </td>
+                    <td>
+                        <input type="checkbox" />
+                    </td>
+                </tr>
+            </table>
+        </tab-controller>
+        <tab-controller name="activationTab" caption="activation">
+            <table>
+                <tr>
+                    <td>
+                        <input type="radio" />
+                    </td>
+                    <td>
+                        <input type="radio" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="checkbox" />
+                    </td>
+                    <td>
+                        <input type="checkbox" />
+                    </td>
+                </tr>
+            </table>
+        </tab-controller>
+        <tab-controller name="tableTab" caption="table">
+            <table border="1">
+                <tr>
+                    <th>Full Name:</th>
+                    <th>Major Field:</th>
+                    <th>Final Grade:</th>
+                </tr>
+                <tr>
+                    <td>
+                        Daniel Suissa
+                    </td>
+                    <td>
+                        Computer Science
+                    </td>
+                    <td>
+                        87
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Itzik Donovski
+                    </td>
+                    <td>
+                        Geology
+                    </td>
+                    <td>
+                        92
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Lior Shaked
+                    </td>
+                    <td>
+                        Mathematics
+                    </td>
+                    <td>
+                        90
+                    </td>
+                </tr>
+            </table>
+        </tab-controller>
+    </tabs-controller>
+</app-window>
+
+<app-window caption="Yarin's Window">
+    <img src="bird1.png" />
+</app-window>
+
+</body>
+</html>
