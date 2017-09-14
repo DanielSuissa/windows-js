@@ -34,7 +34,7 @@ A concept library for making your website take next step in becoming a desktop a
 4. Use multiscreen-option while enabling users to smoothly drag windows from one chrome page to another.
 Try activating:
 ```
-Application.screeensApi.extens()
+Application.screeensApi.extend()
 ```
 Then put both windows side by side,
 now drag :)
