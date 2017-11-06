@@ -2,16 +2,33 @@
     --base-color: rgba(150, 150, 255, 0.8);
     --base-color-active: rgba(200, 200, 255, 0.8);
     --active-taskbar-button: rgba(230, 230, 255, 0.8);
+    --header-radius: 5px;
+    --inactive-window-blur: 3px;
+    --window-blur-transition-length: 300ms;
 }
+
 body {
     background-image: url('../images/silverwingsOfficial2008.png');
-    background-repeat:no-repeat;
-    background-size:100%;
+    background-repeat: no-repeat;
+    background-size: 100%;
     overflow: hidden;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+.wide {
+    width: 100%;
+}
+
+.high {
+    height: 100%;
+}
+
+.spread {
+    width: 100%;
+    height: 100%;
 }
 
 .taskbarBottom {
@@ -52,11 +69,29 @@ body {
 }
 
 .window {
+    border-radius: var(--header-radius) var(--header-radius) 0px 0px;
     box-shadow: 0px 0px 15px black;
     position: absolute;
     left: 20px;
     top: 20px;
+    transition: filter var(--window-blur-transition-length, 0s);
+    filter: blur(var(--inactive-window-blur, 0px));
 }
+
+.activeWindow {
+    filter: blur(0px);
+}
+
+/*.window::before {
+    content: '';
+    height: 100px;
+    width: 100px;
+    background: inherit;
+    position: absolute;
+    left:-50px;
+    box-shadow: inset 0 0 0 200px rgba(255, 255, 255, 0.3);
+    filter: blur(10px);
+}*/
 
 .window span {
     background-color: var(--base-color);
@@ -76,6 +111,11 @@ body {
     font-weight: bold;
     color: black;
     text-shadow: white 0px 0px 3px;
+}
+
+.window-title-cmd-space {
+    text-align: right;
+    width: 130px;
 }
 
 .top-left-resize {
@@ -153,7 +193,7 @@ body {
     border-top-color: white;
     border-left-style: solid;
     border-top-style: solid;
-    border-radius: 5px 0px 0px 0px;
+    border-radius: var(--header-radius) 0px 0px 0px;
 }
 
 .right-top-resize {
@@ -163,7 +203,7 @@ body {
     border-top-color: white;
     border-right-style: solid;
     border-top-style: solid;
-    border-radius: 0px 5px 0px 0px;
+    border-radius: 0px var(--header-radius) 0px 0px;
 }
 
 .right-top-resize, .left-top-resize, .right-bottom-resize, .left-bottom-resize {
@@ -186,7 +226,6 @@ body {
     color: black;
     font-size: 13px;
     font-family: Arial;
-    min-width: 100px;
     overflow-x: hidden;
 }
 
@@ -204,6 +243,10 @@ body {
     font-weight: bold;
     color: white;
     text-shadow: black 0px 0px 3px;
+}
+
+.title-cmd-maximized {
+    text-shadow: white 2px -2px 0px;
 }
 
 .titleCmd {
@@ -228,7 +271,7 @@ body {
     height: 100%;
 }
 
-.tabsController .tabsRow .tab, .tabsController .tabsRow .activeTab{
+.tabsController .tabsRow .tab, .tabsController .tabsRow .activeTab {
     text-align: center;
     vertical-align: middle;
     display: inline-block;
@@ -260,12 +303,12 @@ body {
     background-color: white;
 }
 
-.tabsController .tabsRow .tab, .tabsController .tabsRow .activeTab{
+.tabsController .tabsRow .tab, .tabsController .tabsRow .activeTab {
     margin-right: 5px;
 }
 
 .hr {
     background-color: white;
-    height:5px;
+    height: 5px;
     box-shadow: 0px 1px 0px black;
 }

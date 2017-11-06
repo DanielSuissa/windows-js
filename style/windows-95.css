@@ -62,7 +62,7 @@ body {
     box-shadow: 0px 0px 15px black;
 }
 
-.window .table-cell {
+.window {
     background-color: var(--base-color);
 }
 
@@ -202,7 +202,6 @@ body {
     color: black;
     font-size: 13px;
     font-family: Arial;
-    min-width: 100px;
     overflow-x: hidden;
 }
 

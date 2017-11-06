@@ -422,6 +422,7 @@ Application.cssApi.loadAllStyles = function () {
         cssRequest.send();
     }
 };
+
 Application.cssApi.getStyleObject = function () {
     let str = "",
         cssObject = document.createElement("style");
@@ -486,6 +487,10 @@ Application.screensApi.setBase = function (screen) {
 };
 
 Application.screensApi.initScreen = function (screen, sourceScreen) {
+    screen.Number.prototype.toPixel = function () {
+        return this + "px";
+    };
+
     screen.HTMLElement.prototype.setWidth = function (width) {
         this.style.width = width + "px";
     };
@@ -524,6 +529,16 @@ Application.screensApi.initScreen = function (screen, sourceScreen) {
                 this.appendChild(item)
             });
         }
+    };
+
+    screen.HTMLCollection.prototype.forEach = function (callback) {
+        for (let i = 0; i < this.length; i++) {
+            callback(this[i]);
+        }
+    };
+
+    screen.HTMLCollection.prototype.toArray = function () {
+        return Array.from(this);
     };
 
     screen.addEventListener('keypress', Application.keyboardApi.eventManager.boundedProcessor());
@@ -617,9 +632,9 @@ Application.windowsApi = {
 };
 
 Application.windowsApi.setActiveWindow = function (windowObj) {
-    windowObj.windowObject.classList.add("activeWindow");
+    windowObj.classList.add("activeWindow");
     if (this.activeWindow && this.activeWindow !== windowObj) {
-        this.activeWindow.windowObject.classList.remove("activeWindow");
+        this.activeWindow.classList.remove("activeWindow");
     }
     this.activeWindow = windowObj;
     Application.activeElement = windowObj;
@@ -651,8 +666,8 @@ Application.windowsApi.drag = function (event) {
             newMouseY = event.screenY - (futureActiveScreen.screenY + (futureActiveScreen.outerHeight - futureActiveScreen.innerHeight)) + 7;
         }
 
-        systemWindow.windowObject.setLeft(newMouseX - this.dragParameters.xDifference);
-        systemWindow.windowObject.setTop(newMouseY - this.dragParameters.yDifference);
+        systemWindow.setLeft(newMouseX - this.dragParameters.xDifference);
+        systemWindow.setTop(newMouseY - this.dragParameters.yDifference);
         this.activeScreen = futureActiveScreen;
     }
 };
@@ -693,9 +708,9 @@ class BasicElement extends HTMLElement {
     constructor() {
         super();
         this._shadow = this.attachShadow({mode: 'open'});
-        Application.cssApi.applyForStyle((styleObject) => {
-            this._shadow.appendChild(styleObject)
-        });
+        /*        Application.cssApi.applyForStyle((styleObject) => {
+         this._shadow.appendChild(styleObject);
+         });*/
     }
 }
 
@@ -706,81 +721,83 @@ class WindowFinder extends HTMLElement {
     }
 }
 
+customElements.define("window-title-buttons", class WindowTitleButtons extends HTMLElement {
+    constructor() {
 
-customElements.define("app-window", class AppWindow extends BasicElement {
+    }
+});
+
+
+customElements.define("application-window", class ApplicationWindow extends HTMLElement {
     constructor() {
         super();
-        let create = function (nodeName, classesArray, attributes) {
-            let node = document.createElement(nodeName);
-            Object.assign(node, attributes);
-            classesArray.forEach((item) => {
-                node.classList.add(item)
-            });
-            return node;
+        const MIN_WIDTH = 150;
+        let originalChildren = Array.from(this.children);
+        this.style.display = "block";
+        //this.style.backgroundColor = "red";
+
+        this.mainElement = document.createElement("table");
+        this.mainElement.cellPadding = "0";
+        this.mainElement.cellSpacing = "0";
+        this.mainElement.width = "100%";
+        this.mainElement.height = "100%";
+
+        this.classList.add('window');
+        this.appendChild(this.mainElement);
+        let addRow = (cellNumber, classArray, addNow) => {
+            let row = document.createElement("tr");
+            for (let i = 0; i < cellNumber; i++) {
+                let cell = document.createElement("td");
+                cell.classList.add(classArray[i]);
+                row.appendChild(cell);
+            }
+            if (addNow) {
+                this.mainElement.appendChild(row);
+            }
+            return row;
         };
-        let shadow = this._shadow;
-        let winBox = create("span", ["table", "window"]),
-            sizerTopRow = create("span", ["table-row"]),
-            sizerMiddleRow = create("span", ["table-row"]),
-            sizerBottomRow = create("span", ["table-row"]),
-            draggerRow = create("span", ["table-row"]),
-            sizerTopRow_left = create("span", ["table-cell", "left-top-resize"]),
-            sizerTopRow_center = create("span", ["table-cell", "top-resize"]),
-            sizerTopRow_right = create("span", ["table-cell", "right-top-resize"]),
-            draggerRow_left = create("span", ["table-cell", "left-resize"]),
-            draggerRow_center = create("span", ["table-cell", "dragger"]),
-            draggerRow_right = create("span", ["table-cell", "right-resize"]),
-            sizerMiddleRow_left = create("span", ["table-cell", "left-resize"]),
-            sizerMiddleRow_center = create("span", ["table-cell", "content"]),
-            sizerMiddleRow_right = create("span", ["table-cell", "right-resize"]),
-            sizerBottomRow_left = create("span", ["table-cell", "left-bottom-resize"]),
-            sizerBottomRow_center = create("span", ["table-cell", "bottom-resize"]),
-            sizerBottomRow_right = create("span", ["table-cell", "right-bottom-resize"]);
-        sizerTopRow.appendChildren([sizerTopRow_left, sizerTopRow_center, sizerTopRow_right]);
-        draggerRow.appendChildren([draggerRow_left, draggerRow_center, draggerRow_right]);
-        sizerMiddleRow.appendChildren([sizerMiddleRow_left, sizerMiddleRow_center, sizerMiddleRow_right]);
-        sizerBottomRow.appendChildren([sizerBottomRow_left, sizerBottomRow_center, sizerBottomRow_right]);
-        winBox.appendChildren([sizerTopRow, draggerRow, sizerMiddleRow, sizerBottomRow]);
-        shadow.appendChild(winBox);
+        let getCell = (row, col) => {
+            return this.mainElement.rows[row].cells[col];
+        };
+        let initTitleFormat = () => {
+            this.windowBar.innerHTML = `
+            <table width="100%" height="100%" border="0" cellspacing="0" cellpadding="1">
+                <tr>
+                    <td>dsfs</td>
+                    <td align="right" width="100">
+                        <span class="titleCloseCmd">x</span>
+                        <span class="titleCmd">&square;</span>
+                        <span class="titleCmd">-</span>
+                    </td>
+                </tr>
+            </table>
+            `;
+        };
 
-        let titleTable = create("span", ["table"]),
-            titleRow = create("span", ["table-row"]),
-            titleSpace = create("span", ["table-cell", "window-title"]),
-            buttonSpace = create("span", ["table-cell", "buttons-space"]),
-            space = create("span", [], {innerHTML: '&nbsp;'}),
-            closeCmd = create("span", ["titleCloseCmd"], {innerHTML: 'x'}),
-            maxCmd = create("span", ["titleCmd"], {innerHTML: '&square;'}),
-            minCmd = create("span", ["titleCmd"], {innerHTML: '-'});
-        buttonSpace.appendChildren([minCmd, space, maxCmd, space.cloneNode(true), closeCmd]);
-        buttonSpace.style.width = "105px";
-        buttonSpace.style.textAlign = "right";
-        titleRow.appendChildren([titleSpace, buttonSpace]);
-        titleTable.appendChild(titleRow);
-        titleTable.style.width = "100%";
-        buttonSpace.style.minWidth = "100px";
-        draggerRow_center.appendChild(titleTable);
-        draggerRow_center.style.verticalAlign = "middle";
+        addRow(3, ['left-top-resize', 'top-resize', 'right-top-resize'], true);
+        addRow(3, ['left-resize', 'dragger', 'right-resize'], true);
+        addRow(3, ['left-resize', 'content', 'right-resize'], true);
+        addRow(3, ['left-bottom-resize', 'bottom-resize', 'right-bottom-resize'], true);
 
-        draggerRow_center.addEventListener('mousedown', (event) => {
-            Application.windowsApi.setDragMode(true, {
-                xDifference: event.clientX - winBox.getLeft(),
-                yDifference: event.clientY - winBox.getTop()
-            });
-        });
+        this.windowBar = getCell(1, 1);
+        this.contentPane = getCell(2, 1);
+        this.contentPane.appendChildren(originalChildren)
 
-        /*        Application.general.mouseDownMoveUp(draggerRow_center,[],
-         (downEvent)=>{},
-         (moveEvent)=>{},
-         (upEvent)=>{}
-         );*/
+        initTitleFormat();
+
+        this.titleBar = this.windowBar.firstElementChild.rows[0].cells[0];
 
         let setRightSizer = (sizer) => {
-            Application.general.mouseDownMoveUp(sizer, [],
-                (downEvent) => {
+            Application.general.mouseDownMoveUp(sizer, [{}],
+                (downEvent, ref) => {
+                    ref.originalX = downEvent.clientX;
+                    ref.resizableObject = (this.contentPane.firstElementChild.constructor.name === 'AppWindowBody' ? this.contentPane.firstElementChild : this.mainElement);
+                    ref.originalW = ref.resizableObject.offsetWidth;
                 },
-                (moveEvent) => {
-                    let win = this.windowObject;
-                    win.setWidth(moveEvent.clientX - win.getLeft());
+                (moveEvent, ref) => {
+                    if (ref.originalW + (moveEvent.clientX - ref.originalX) >= MIN_WIDTH) {
+                        ref.resizableObject.setWidth(ref.originalW + (moveEvent.clientX - ref.originalX));
+                    }
                 },
                 (upEvent) => {
                 }
@@ -788,23 +805,31 @@ customElements.define("app-window", class AppWindow extends BasicElement {
         }, setLeftSizer = (sizer) => {
             Application.general.mouseDownMoveUp(sizer, [{}],
                 (downEvent, ref) => {
-                    ref.value = this.windowObject.getLeft() + this.windowObject.getWidth();
+                    //ref.value = this.getLeft() + this.getWidth();
+                    ref.originalX = downEvent.clientX;
+                    ref.resizableObject = (this.contentPane.firstElementChild.constructor.name === 'AppWindowBody' ? this.contentPane.firstElementChild : this.mainElement);
+                    ref.originalW = ref.resizableObject.offsetWidth;
                 },
                 (moveEvent, ref) => {
-                    let win = this.windowObject;
-                    win.setLeft(moveEvent.clientX);
-                    win.setWidth(ref.value - moveEvent.clientX);
+                    if ((ref.originalW - (moveEvent.clientX - ref.originalX)) > MIN_WIDTH) {
+                        this.setLeft(moveEvent.clientX);
+                        ref.resizableObject.setWidth(ref.originalW - (moveEvent.clientX - ref.originalX));
+                    }
                 },
                 (upEvent) => {
                 }
             );
         }, setDownSizer = (sizer) => {
-            Application.general.mouseDownMoveUp(sizer, [],
-                (downEvent) => {
+            Application.general.mouseDownMoveUp(sizer, [{}],
+                (downEvent, ref) => {
+                    ref.potentialY = this.contentPane.offsetHeight;
+                    ref.originalY = downEvent.clientY;
                 },
-                (moveEvent) => {
-                    let win = this.windowObject;
-                    win.setHeight(moveEvent.clientY - win.getTop());
+                (moveEvent, ref) => {
+                    //this.setHeight(moveEvent.clientY - this.getTop());
+                    if (ref.originalY - moveEvent.clientY < ref.potentialY) {
+                        this.mainElement.setHeight(moveEvent.clientY - this.getTop());
+                    }
                 },
                 (upEvent) => {
                 }
@@ -812,46 +837,227 @@ customElements.define("app-window", class AppWindow extends BasicElement {
         }, setUpSizer = (sizer) => {
             Application.general.mouseDownMoveUp(sizer, [{}],
                 (downEvent, ref) => {
-                    ref.value = this.windowObject.getTop() + this.windowObject.getHeight();
+                    ref.potentialY = this.contentPane.offsetHeight;
+                    ref.originalY = downEvent.clientY;
+                    ref.value = this.getTop() + this.getHeight();
                 },
                 (moveEvent, ref) => {
-                    let win = this.windowObject;
-                    win.setTop(moveEvent.clientY);
-                    win.setHeight(ref.value - moveEvent.clientY);
+                    if (moveEvent.clientY - ref.originalY < ref.potentialY) {
+                        this.setTop(moveEvent.clientY);
+                        this.mainElement.setHeight(ref.value - moveEvent.clientY);
+                    }
                 },
                 (upEvent) => {
                 }
             );
         };
 
-        setLeftSizer(sizerTopRow_left);
-        setLeftSizer(draggerRow_left);
-        setLeftSizer(sizerMiddleRow_left);
-        setLeftSizer(sizerBottomRow_left);
+        for (let i = 0; i < 4; i++) {
+            setRightSizer(getCell(i, 2));
+            setLeftSizer(getCell(i, 0));
+            if (i < 3) {
+                setUpSizer(getCell(0, i));
+                setDownSizer(getCell(3, i));
+            }
+        }
+    }
 
-        setRightSizer(sizerTopRow_right);
-        setRightSizer(draggerRow_right);
-        setRightSizer(sizerMiddleRow_right);
-        setRightSizer(sizerBottomRow_right);
+});
 
-        setDownSizer(sizerBottomRow_left);
-        setDownSizer(sizerBottomRow_center);
-        setDownSizer(sizerBottomRow_right);
+customElements.define("app-window", class AppWindow extends HTMLElement {
+    constructor() {
+        super();
+        this.windowStatus = {};
+        this.classList.add("table", "window");
+        let originalChildren = Array.from(this.children);
+        let windowTemplate = `
+                <span class="table-row">
+                    <span class="table-cell left-top-resize"></span>
+                    <span class="table-cell top-resize"></span>
+                    <span class="table-cell right-top-resize"></span>
+                </span>
+                <span class="table-row">
+                    <span class="table-cell left-resize"></span>
+                    <span class="table-cell dragger">
+                        <span class="spread table">
+                            <span class="table-row">
+                                <span class="table-cell window-title"></span>
+                                <span class="table-cell window-title-cmd-space">
+                                    <span name="miniCmd" class="titleCmd">-</span>
+                                    <span name="maxCmd" class="titleCmd">&square;</span>                                    
+                                    <span name="closeCmd" class="titleCloseCmd">x</span>
+                                </span>
+                            </span>
+                        </span>
+                    </span>
+                    <span class="table-cell right-resize"></span>
+                </span>
+                <span class="table-row">
+                    <span class="table-cell left-resize"></span>
+                    <span class="table-cell content"></span>
+                    <span class="table-cell right-resize"></span>
+                </span>
+                <span class="table-row">
+                    <span class="table-cell left-bottom-resize"></span>
+                    <span class="table-cell bottom-resize"></span>
+                    <span class="table-cell right-bottom-resize"></span>
+                </span>
+                `;
+        this.innerHTML = windowTemplate;
 
-        setUpSizer(sizerTopRow_left);
-        setUpSizer(sizerTopRow_center);
-        setUpSizer(sizerTopRow_right);
+        this.contentPane = this.querySelector('span.content');
+        this.contentPane.appendChildren(originalChildren);
+        this.titleBar = this.querySelector('span.window-title');
+        this.restoreData = {};
 
-        this.titleBar = titleSpace;
-        this.contentPane = sizerMiddleRow_center;
-        this.windowObject = winBox;
-        this.contentPane.appendChildren(Array.from(this.children));
-        this.windowObject.addEventListener('mousedown', () => {
+        let dragger = this.querySelector('span.dragger'),
+            rightSizers = Array.from(this.querySelectorAll('span.right-resize')).concat([this.querySelector('span.right-top-resize'), this.querySelector('span.right-bottom-resize')]),
+            leftSizers = Array.from(this.querySelectorAll('span.left-resize')).concat([this.querySelector('span.left-top-resize'), this.querySelector('span.left-bottom-resize')]),
+            upSizers = [this.querySelector('span.left-top-resize'), this.querySelector('span.top-resize'), this.querySelector('span.right-top-resize')],
+            downSizers = [this.querySelector('span.left-bottom-resize'), this.querySelector('span.bottom-resize'), this.querySelector('span.right-bottom-resize')];
+
+        let maxCmd = this.querySelector('span[name="maxCmd"]');
+
+        this.titleBarButtons = {
+            maxCmd: maxCmd
+        };
+
+        maxCmd.addEventListener('click', (event) => {
+            this.toggleMaxRestore();
+        });
+
+        dragger.addEventListener('mousedown', (event) => {
+            Application.windowsApi.setDragMode(true, {
+                xDifference: event.clientX - this.getLeft(),
+                yDifference: event.clientY - this.getTop()
+            });
+        });
+
+        const MIN_WIDTH = 150;
+        let setRightSizer = (sizer) => {
+            Application.general.mouseDownMoveUp(sizer, [{}],
+                (downEvent, ref) => {
+                    ref.originalX = downEvent.clientX;
+                    ref.resizableObject = this._getResizableObject();
+                    ref.originalW = ref.resizableObject.offsetWidth;
+                },
+                (moveEvent, ref) => {
+                    if (ref.originalW + (moveEvent.clientX - ref.originalX) >= MIN_WIDTH) {
+                        ref.resizableObject.setWidth(ref.originalW + (moveEvent.clientX - ref.originalX));
+                    }
+                },
+                (upEvent) => {
+                }
+            );
+        }, setLeftSizer = (sizer) => {
+            Application.general.mouseDownMoveUp(sizer, [{}],
+                (downEvent, ref) => {
+                    //ref.value = this.getLeft() + this.getWidth();
+                    ref.originalX = downEvent.clientX;
+                    ref.resizableObject = this._getResizableObject();
+                    ref.originalW = ref.resizableObject.offsetWidth;
+                },
+                (moveEvent, ref) => {
+                    if ((ref.originalW - (moveEvent.clientX - ref.originalX)) > MIN_WIDTH) {
+                        this.setLeft(moveEvent.clientX);
+                        ref.resizableObject.setWidth(ref.originalW - (moveEvent.clientX - ref.originalX));
+                    }
+                },
+                (upEvent) => {
+                }
+            );
+        }, setDownSizer = (sizer) => {
+            Application.general.mouseDownMoveUp(sizer, [{}],
+                (downEvent, ref) => {
+                    ref.potentialY = this._getResizableObject().offsetHeight;
+                    ref.originalY = downEvent.clientY;
+                },
+                (moveEvent, ref) => {
+                    //this.setHeight(moveEvent.clientY - this.getTop());
+                    if (ref.originalY - moveEvent.clientY < ref.potentialY) {
+                        this._getResizableObject().setHeight(ref.potentialY - (ref.originalY - moveEvent.clientY));
+                    }
+                },
+                (upEvent) => {
+                }
+            );
+        }, setUpSizer = (sizer) => {
+            Application.general.mouseDownMoveUp(sizer, [{}],
+                (downEvent, ref) => {
+                    ref.potentialY = this._getResizableObject().offsetHeight;
+                    ref.originalY = downEvent.clientY;
+                },
+                (moveEvent, ref) => {
+                    if (moveEvent.clientY - ref.originalY < ref.potentialY) {
+                        this.setTop(moveEvent.clientY);
+                        this._getResizableObject().setHeight(ref.potentialY + (ref.originalY - moveEvent.clientY));
+                    }
+                },
+                (upEvent) => {
+                }
+            );
+        };
+
+        rightSizers.forEach((sizer) => {
+            setRightSizer(sizer);
+        });
+        leftSizers.forEach((sizer) => {
+            setLeftSizer(sizer);
+        });
+        upSizers.forEach((sizer) => {
+            setUpSizer(sizer);
+        });
+        downSizers.forEach((sizer) => {
+            setDownSizer(sizer);
+        });
+
+        this.addEventListener('mousedown', () => {
             Application.windowsApi.makeWindowOnTop(this);
             Application.windowsApi.setActiveWindow(this);
         });
         this.parentScreen = window;
         Application.constructionInfo.declareWindowUnderConstruction(this);
+
+    }
+
+    _getResizableObject() {
+        return (this.contentPane.firstElementChild.constructor.name === 'AppWindowBody' ? this.contentPane.firstElementChild : this);
+    }
+
+    maximize() {
+        this.titleBarButtons.maxCmd.classList.add("title-cmd-maximized");
+
+        this.windowStatus.isMaximized = true;
+
+        this.restoreData.top = this.getTop();
+        this.restoreData.left = this.getLeft();
+        this.restoreData.width = this.getWidth();
+        this.restoreData.height = this.getHeight();
+
+        this.setTop(0);
+        this.setLeft(0);
+        this._getResizableObject().setWidth(this.parentScreen.innerWidth - 10);
+        this._getResizableObject().setHeight(this.parentScreen.innerHeight - 10);
+        console.log(this.restoreData);
+    }
+
+    restore(){
+        this.titleBarButtons.maxCmd.classList.remove("title-cmd-maximized");
+
+        this.windowStatus.isMaximized = false;
+
+        this.setTop(this.restoreData.top);
+        this.setLeft(this.restoreData.left);
+        this._getResizableObject().setWidth(this.restoreData.width);
+        this._getResizableObject().setHeight(this.restoreData.height);
+    }
+
+    toggleMaxRestore() {
+        if(this.windowStatus.isMaximized){
+            this.restore();
+        }else{
+            this.maximize();
+        }
     }
 
     getParentScreen() {
@@ -867,7 +1073,7 @@ customElements.define("app-window", class AppWindow extends BasicElement {
     }
 
     setLayer(layerIndex) {
-        this.windowObject.style.zIndex = layerIndex;
+        this.style.zIndex = layerIndex;
     }
 
     setContent(element) {
@@ -913,13 +1119,21 @@ customElements.define("app-window", class AppWindow extends BasicElement {
     }
 });
 
-
 customElements.define("app-window-body", class AppWindowBody extends HTMLElement {
     constructor() {
         super();
         this.style.height = "100%";
         this.style.width = "100%";
         this.style.display = "block";
+        /*        this.style.minWidth = "0px";
+         this.style.minHeight = "0px";*/
+        /*        let contentFix = document.createElement("div"),
+         hiddenchar = document.createElement("div");
+         hiddenchar.style.width = hiddenchar.style.height = "0px";
+         hiddenchar.style.color = "transparent";
+         contentFix.appendChildren(this.children.toArray());
+         hiddenchar.appendChild(document.createTextNode('.'));
+         this.appendChildren([hiddenchar,contentFix]);*/
     }
 
     setBgColor(bgColorStr) {
