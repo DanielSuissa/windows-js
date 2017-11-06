@@ -1,6 +1,8 @@
 # windows-js
 A concept library for making your website take next step in becoming a desktop application like
 
+![Example : Single Screen, Single Focus Desktop App](https://raw.githubusercontent.com/DanielSuissa/windows-js/master/images/single_screen.PNG)
+
 ## This is still a work in progress
 
 1. Arrange your information within natural behaving Windows
