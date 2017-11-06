@@ -45,4 +45,6 @@ You can now extend to whatever number of screens you like.
 
 
 ![Example : Double Screen Desktop App](https://raw.githubusercontent.com/DanielSuissa/windows-js/master/images/multiscreen1.png)
+
+Drag your windows between browser instances
 ![Example : Double Screen Desktop App](https://raw.githubusercontent.com/DanielSuissa/windows-js/master/images/multiscreen2.png)
