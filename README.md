@@ -42,3 +42,7 @@ Then put both windows side by side,
 now drag :)
 
 You can now extend to whatever number of screens you like.
+
+
+![Example : Double Screen Desktop App](https://raw.githubusercontent.com/DanielSuissa/windows-js/master/images/multiscreen1.png)
+![Example : Double Screen Desktop App](https://raw.githubusercontent.com/DanielSuissa/windows-js/master/images/multiscreen2.png)
